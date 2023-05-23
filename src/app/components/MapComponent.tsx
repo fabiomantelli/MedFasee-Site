@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import 'ol/ol.css';
 import * as ol from 'ol';
 import { Map, View } from 'ol';
@@ -10,15 +10,12 @@ import Feature from 'ol/Feature';
 import Point from 'ol/geom/Point';
 import { fromLonLat } from 'ol/proj';
 import { Circle as CircleStyle, Fill, Stroke, Style } from 'ol/style';
-import { getPmus1, getPmus2 } from '../../data/phasorData';
-import { useDisclosure, Button, Box } from "@chakra-ui/react";
-import Overlay from 'ol/Overlay';
-
+import { getPmus1, getPmus2 } from '../data/phasorData';
 
 const MapComponent = () => {
   const data = useMemo(() => [...getPmus1(), ...getPmus2()], []);
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const universityRef = useRef();
+  const [isOpen, setIsOpen] = useState(false);
+  const universityRef = useRef(null);
 
   useEffect(() => {
     const points = data.map(({ coordinates, university }) => {
@@ -73,7 +70,7 @@ const MapComponent = () => {
           const coordinates = geometry.getCoordinates();
           const universityName = feature.get('name');
           universityRef.current = universityName;
-          onOpen();
+          setIsOpen(true);
           const popup = new ol.Overlay({
             position: coordinates,
             element: document.getElementById('popup')!,
@@ -83,22 +80,24 @@ const MapComponent = () => {
         }
       }
     });
-    
-    
 
     return () => {
       map.un('singleclick', () => {});
     };
-    
-  }, [data, onOpen]);
+
+  }, [data]);
+
+  const handleClose = () => {
+    setIsOpen(false);
+  };
 
   return (
     <>
       <div id="map-container" style={{ height: 'calc(100vh - 75px)' }} />
-      <Box id="popup" width={100} bg='orange.400' p={2} borderRadius={20} display={isOpen ? "block" : "none"}>
+      <div id="popup" className={`w-100 bg-orange-400 p-2 rounded-2xl ${isOpen ? 'block' : 'hidden'}`}>
         <p>{universityRef.current}</p>
-        <Button onClick={onClose} size='xs' >Close</Button>
-      </Box>
+        <button onClick={handleClose} className="text-xs">Close</button>
+      </div>
     </>
   );
 };

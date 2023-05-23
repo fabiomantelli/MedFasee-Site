@@ -1,8 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
 
-import { Flex, Box } from "@chakra-ui/react";
-
 interface PolarPlotProps {
   data: any;
   option: string;
