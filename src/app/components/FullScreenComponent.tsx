@@ -28,6 +28,8 @@ const FullScreenComponent = ({
   option,
   handleOption,
 }: FullScreenComponentProps) => {
+  console.log(`data int FullScreen: ${JSON.stringify(data)}`)
+  console.log(`option: ${option}`)
   const [isOpen, setIsOpen] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
 
